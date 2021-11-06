@@ -2,8 +2,10 @@ const express = require("express");
 const helmet = require("helmet");
 const dotenv = require("dotenv").config();
 const cookieParser = require("cookie-parser");
+const connectMongoDB = require("./db/mongodb");
 
 const app = express();
+connectMongoDB();
 
 app.use(helmet());
 app.use(express.json());
