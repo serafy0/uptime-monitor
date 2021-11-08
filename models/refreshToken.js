@@ -9,12 +9,13 @@ const refreshTokenSchema = new mongoose.Schema(
       required: true,
       default: randomToken(),
       unique: true,
+      index: true,
     },
     expirationDate: {
       type: Date,
-      default: new Date(Date.now() + 10),
+      default: Date.now() + 3000,
     },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
   },
   { timestamps: true }
 );
@@ -23,10 +24,13 @@ refreshTokenSchema.virtual("isExpired").get(function () {
   return Date.now() >= this.expirationDate;
 });
 refreshTokenSchema.methods.resetToken = function () {
-  this.value = randomToken();
-  this.expirationDate = new Date(Date.now() + 10);
-
-  return this.value;
+  const newTokenValue = randomToken();
+  const newExpirationDate = Date.now + 3000;
+  this.model("RefreshToken").findOneAndUpdate(
+    { _id: this._id },
+    { value: newTokenValue, expirationDate: newExpirationDate }
+  );
+  return newTokenValue;
 };
 
 module.exports = RefreshToken = mongoose.model(

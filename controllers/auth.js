@@ -5,7 +5,6 @@ const {
   validateLogin,
   validateSignUp,
   validateObjectId,
-  ema,
   validateEmail,
 } = require("../validators/auth");
 const { sendVerificationCode } = require("../services/email");
@@ -130,11 +129,36 @@ exports.resendEmailToken = async (req, res, next) => {
       return res.status(400).json({ error: "invalid email" });
     }
     const user = await User.findOne({ email: email }).populate("refreshToken");
-    const newTokenValue = user.refreshToken.resetToken();
-    await sendVerificationCode(user.email, newTokenValue);
-    return res
-      .status(200)
-      .json({ message: `new refresh token sent to ${user.email}  ` });
+    user.refreshToken.resetToken();
+    await user.save();
+    await sendVerificationCode(user.email, user.refreshToken.value);
+    return res.status(200).json({
+      message: `new refresh token sent to ${user.email}`,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.verifyEmail = async (req, res, next) => {
+  try {
+    const { refreshTokenValue } = req.params;
+    const token = await RefreshToken.findOne({
+      value: refreshTokenValue,
+    }).populate("user", "emailVerified");
+    if (!token) {
+      return res.status(404).json({ message: "token not found" });
+    }
+    if (token.isExpired) {
+      return res.status(404).json({ message: "token is expired" });
+    }
+    if (token.user.emailVerified) {
+      return res.status(403).json({ message: "email already verified " });
+    }
+    token.user.emailVerified = true;
+    await token.user.save();
+
+    return res.status(200).json({ message: token });
   } catch (err) {
     next(err);
   }

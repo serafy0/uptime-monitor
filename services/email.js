@@ -30,8 +30,8 @@ const sendVerificationCode = async (email, token) => {
     from: '"Fred Foo" <bosta@example.com>' || process.env.EMAIl_ADDRESS, // sender address
     to: email,
     subject: "email verification",
-    text: `Hey there, here's your token ${token}`,
-    html: `<b>Hey there, here's your token ${token} </b>`,
+    text: `Hey there, here's your token ${process.env.API_URL}/auth/verify-email/${token}`,
+    html: `<b>Hey there, here's your token <a href="${process.env.API_URL}/auth/verify-email/${token}">verify</a> </b>`,
   });
   if (process.env.NODE_ENV !== "production") {
     console.log("Message sent: %s", info.messageId);

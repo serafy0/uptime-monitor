@@ -8,6 +8,7 @@ const {
   getUser,
   logoutUser,
   resendEmailToken,
+  verifyEmail,
 } = require("../controllers/auth");
 const protect = require("../middleware/auth");
 
@@ -19,4 +20,5 @@ router.route("/user").get(protect, getUser);
 
 router.route("/logout").get(protect, logoutUser);
 router.route("/resend-token").post(resendEmailToken);
+router.route("/verify-email/:refreshTokenValue").get(verifyEmail);
 module.exports = router;
