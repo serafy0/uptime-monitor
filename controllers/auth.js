@@ -153,7 +153,7 @@ exports.verifyEmail = async (req, res, next) => {
       return res.status(404).json({ message: "token is expired" });
     }
     if (token.user.emailVerified) {
-      return res.status(403).json({ message: "email already verified " });
+      return res.status(409).json({ message: "email already verified " });
     }
     token.user.emailVerified = true;
     await token.user.save();
