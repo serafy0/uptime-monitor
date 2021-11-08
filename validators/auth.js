@@ -1,5 +1,5 @@
 const { ajv } = require("./index");
-
+const mongoose = require("mongoose");
 const email = {
   type: "string",
   format: "email",
@@ -27,8 +27,12 @@ const authSignUp = {
 
 const validateLogin = ajv.compile(authLogin);
 const validateSignUp = ajv.compile(authSignUp);
+const validateEmail = ajv.compile(email);
 
+const validateObjectId = (string) => mongoose.isValidObjectId(string);
 module.exports = {
   validateLogin,
   validateSignUp,
+  validateEmail,
+  validateObjectId,
 };

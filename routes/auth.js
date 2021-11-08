@@ -7,6 +7,7 @@ const {
   loginUser,
   getUser,
   logoutUser,
+  resendEmailToken,
 } = require("../controllers/auth");
 const protect = require("../middleware/auth");
 
@@ -17,5 +18,5 @@ router.route("/login").post(loginUser);
 router.route("/user").get(protect, getUser);
 
 router.route("/logout").get(protect, logoutUser);
-
+router.route("/resend-token").post(resendEmailToken);
 module.exports = router;
