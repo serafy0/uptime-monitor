@@ -18,7 +18,8 @@
     "express": "^4.17.1",
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.0.12"
+    "mongoose": "^6.0.12",
+    "nodemailer": "^6.7.0"
   },
   "devDependencies": {
     "cookie-parser": "^1.4.5",
