@@ -158,7 +158,7 @@ exports.verifyEmail = async (req, res, next) => {
     token.user.emailVerified = true;
     await token.user.save();
 
-    return res.status(200).json({ message: "email succefully verfied" });
+    return res.status(200).json({ message: "email successfully verified" });
   } catch (err) {
     next(err);
   }
