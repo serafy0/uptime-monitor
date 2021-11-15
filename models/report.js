@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const reportSchema = new mongoose.Schema({
-  status: {},
+  status: { type: Number, required: true },
   availability: Number,
   outages: { type: Number, default: 0 },
   downtimeInSeconds: { type: Number, default: 0 },
