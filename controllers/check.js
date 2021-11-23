@@ -1,5 +1,10 @@
 const Check = require("../models/check");
-const { removeJob, addCheckJob } = require("../queues/check");
+const {
+  removeJob,
+  addCheckJob,
+  getAllRepeatable,
+  removeAllJobs,
+} = require("../queues/check");
 
 exports.addCheck = async (req, res, next) => {
   try {
@@ -52,6 +57,23 @@ exports.pauseCheck = async (req, res, next) => {
     await removeJob(pausedCheck);
 
     return res.status(200).json({ message: "check paused" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getAllJobs = async (req, res, next) => {
+  try {
+    const jobs = await getAllRepeatable();
+    return res.status(200).json({ runningJobs: jobs });
+  } catch (err) {
+    next(err);
+  }
+};
+exports.removeAllJobs = async (req, res, next) => {
+  try {
+    const jobs = await removeAllJobs();
+    return res.status(200).json({ message: "all is done" });
   } catch (err) {
     next(err);
   }
