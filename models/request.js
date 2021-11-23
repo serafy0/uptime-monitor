@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 
 const requestSchema = new mongoose.Schema(
   {
-    status: { type: Number, required: true },
-    responseDuration: { type: Number },
+    status: Number,
+    responseDuration: Number,
+    error: { type: String },
     check: { type: mongoose.Schema.Types.ObjectId, ref: "check" },
   },
   { timestamps: true }
