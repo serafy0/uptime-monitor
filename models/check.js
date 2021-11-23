@@ -37,6 +37,7 @@ const checkSchema = new mongoose.Schema({
   ignoreSSL: { type: Boolean, default: true },
   requests: [{ type: mongoose.Schema.Types.ObjectId, ref: "request" }],
   creator: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+  isDown: { type: Boolean, default: true },
 });
 
 module.exports = Check = mongoose.model("check", checkSchema);
