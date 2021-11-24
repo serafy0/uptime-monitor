@@ -5,6 +5,7 @@ const {
   getAllRepeatable,
   removeAllJobs,
 } = require("../queues/check");
+const { validateCheck } = require("../validators/check");
 
 exports.addCheck = async (req, res, next) => {
   try {
@@ -20,6 +21,11 @@ exports.addCheck = async (req, res, next) => {
       assertStatus,
       ignoreSSL,
     } = req.body;
+    const valid = validateCheck(req.body);
+    if (!valid) {
+      return res.status(400).json({ error: validateCheck.errors[0] });
+    }
+
     const newURL = new URL(linkText);
     console.log(newURL);
     const newCheck = await Check.create({
