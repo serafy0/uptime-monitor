@@ -13,7 +13,7 @@ const refreshTokenSchema = new mongoose.Schema(
     },
     expirationDate: {
       type: Date,
-      default: Date.now() + 3000,
+      default: Date.now() + 1000 * 60 * 15,
     },
     user: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
   },
@@ -21,7 +21,7 @@ const refreshTokenSchema = new mongoose.Schema(
 );
 
 refreshTokenSchema.virtual("isExpired").get(function () {
-  return Date.now() >= this.expirationDate;
+  return new Date(Date.now()) >= this.expirationDate;
 });
 refreshTokenSchema.methods.resetToken = function () {
   const newTokenValue = randomToken();
