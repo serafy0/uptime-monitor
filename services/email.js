@@ -1,4 +1,3 @@
-const mailer = require("nodemailer");
 const nodemailer = require("nodemailer");
 
 const sendVerificationCode = async (email, token) => {
