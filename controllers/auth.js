@@ -7,7 +7,7 @@ const {
   validateObjectId,
   validateEmail,
 } = require("../validators/auth");
-const { sendVerificationCode } = require("../services/email");
+const { sendVerificationCode } = require("../services/auth");
 const mongoose = require("mongoose");
 
 exports.registerUser = async (req, res, next) => {

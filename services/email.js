@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-const sendVerificationCode = async (email, token) => {
+exports.sendEmail = async (to, { subject, text, html }) => {
   let transporter;
   if (process.env.NODE_ENV !== "production") {
     let testAccount = await nodemailer.createTestAccount();
@@ -27,15 +27,13 @@ const sendVerificationCode = async (email, token) => {
 
   let info = await transporter.sendMail({
     from: '"Fred Foo" <bosta@example.com>' || process.env.EMAIl_ADDRESS, // sender address
-    to: email,
-    subject: "email verification",
-    text: `Hey there, here's your token ${process.env.API_URL}/auth/verify-email/${token}`,
-    html: `<b>Hey there, here's your token <a href="${process.env.API_URL}/auth/verify-email/${token}">verify</a> </b>`,
+    to: to,
+    subject: subject,
+    text: text,
+    html: html,
   });
   if (process.env.NODE_ENV !== "production") {
     console.log("Message sent: %s", info.messageId);
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
   }
 };
-
-module.exports = { sendVerificationCode };
