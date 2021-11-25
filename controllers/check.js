@@ -99,6 +99,20 @@ exports.deleteCheck = async (req, res, next) => {
   }
 };
 
+exports.findByTag = async (req, res, next) => {
+  try {
+    const { tag } = req.params;
+
+    const checks = await Check.find({ tags: tag });
+    if (!checks) {
+      return res.status(404).json({ error: "no checks found with tag" });
+    }
+    return res.status(200).json({ checks: checks });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.editCheck = async (req, res, next) => {
   try {
     const { id } = req.params;
