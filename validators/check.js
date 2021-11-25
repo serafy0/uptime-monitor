@@ -22,6 +22,13 @@ const check = {
     },
     assertStatus: { type: "number", minimum: 100, maximum: 599 },
     ignoreSSL: { type: "boolean" },
+    tags: {
+      type: "array",
+      items: {
+        type: "string",
+        transform: ["trim", "toLowerCase"],
+      },
+    },
   },
   additionalProperties: false,
 };

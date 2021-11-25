@@ -20,14 +20,15 @@ exports.addCheck = async (req, res, next) => {
       httpHeaders,
       assertStatus,
       ignoreSSL,
+      tags,
     } = req.body;
     const valid = validateCheck(req.body);
     if (!valid) {
       return res.status(400).json({ error: validateCheck.errors[0] });
     }
+    const uniqueTags = [...new Set(tags)];
 
     const newURL = new URL(linkText);
-    console.log(newURL);
     const newCheck = await Check.create({
       name: name,
       url: newURL.origin,
@@ -42,6 +43,7 @@ exports.addCheck = async (req, res, next) => {
       authentication: authentication,
       httpHeaders: httpHeaders,
       threshold: threshold,
+      tags: uniqueTags,
     });
 
     await addCheckJob(newCheck);
