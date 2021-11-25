@@ -80,6 +80,22 @@ exports.getOneCheck = async (req, res, next) => {
     next(err);
   }
 };
+exports.deleteCheck = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const check = await Check.findById(id);
+    if (!check) {
+      return res.status(404).json({ error: "check not found" });
+    }
+    await removeJob(check);
+
+    const deletedCheck = await Check.findByIdAndRemove(id);
+
+    return res.status(200).json({ message: "check deleted" });
+  } catch (err) {
+    next(err);
+  }
+};
 
 exports.editCheck = async (req, res, next) => {
   try {
