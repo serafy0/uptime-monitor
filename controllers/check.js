@@ -113,6 +113,7 @@ exports.editCheck = async (req, res, next) => {
       httpHeaders,
       assertStatus,
       ignoreSSL,
+      tags,
     } = req.body;
 
     const check = await Check.findById(id);
@@ -124,6 +125,8 @@ exports.editCheck = async (req, res, next) => {
     if (!valid) {
       return res.status(400).json({ error: validateEditingCheck.errors[0] });
     }
+
+    const uniqueTags = [...new Set(tags)];
 
     let newURL;
 
@@ -149,6 +152,7 @@ exports.editCheck = async (req, res, next) => {
         authentication: authentication,
         httpHeaders: httpHeaders,
         threshold: threshold,
+        tags: uniqueTags,
       },
       { new: true }
     );
