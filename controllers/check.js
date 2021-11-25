@@ -44,6 +44,7 @@ exports.addCheck = async (req, res, next) => {
       httpHeaders: httpHeaders,
       threshold: threshold,
       tags: uniqueTags,
+      creator: req.user.id,
     });
 
     await addCheckJob(newCheck);
@@ -62,6 +63,10 @@ exports.pauseCheck = async (req, res, next) => {
     if (!pausedCheck) {
       return res.status(404).json({ error: "check not found" });
     }
+
+    if (!pausedCheck.creator.equals(req.user.id)) {
+      return res.sendStatus(401);
+    }
     await removeJob(pausedCheck);
 
     return res.status(200).json({ message: "check paused" });
@@ -77,6 +82,10 @@ exports.getOneCheck = async (req, res, next) => {
     if (!check) {
       return res.status(404).json({ error: "check not found" });
     }
+    if (!check.creator.equals(req.user.id)) {
+      return res.sendStatus(401);
+    }
+
     return res.status(200).json({ check: check });
   } catch (err) {
     next(err);
@@ -89,6 +98,10 @@ exports.deleteCheck = async (req, res, next) => {
     if (!check) {
       return res.status(404).json({ error: "check not found" });
     }
+    if (!check.creator.equals(req.user.id)) {
+      return res.sendStatus(401);
+    }
+
     await removeJob(check);
 
     const deletedCheck = await Check.findByIdAndRemove(id);
@@ -103,7 +116,7 @@ exports.findByTag = async (req, res, next) => {
   try {
     const { tag } = req.params;
 
-    const checks = await Check.find({ tags: tag });
+    const checks = await Check.find({ tags: tag, creator: req.user.id });
     if (!checks) {
       return res.status(404).json({ error: "no checks found with tag" });
     }
@@ -133,6 +146,10 @@ exports.editCheck = async (req, res, next) => {
     const check = await Check.findById(id);
     if (!check) {
       return res.status(404).json({ error: "check not found" });
+    }
+
+    if (!check.creator.equals(req.user.id)) {
+      return res.sendStatus(401);
     }
 
     const valid = validateEditingCheck(req.body);
