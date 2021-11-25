@@ -26,10 +26,15 @@ const check = {
   additionalProperties: false,
 };
 
+const editCheck = check;
+editCheck.required = [];
+
 const validateCheck = ajv.compile(check);
+const validateEditingCheck = ajv.compile(editCheck);
 
 const validateObjectId = (string) => mongoose.isValidObjectId(string);
 module.exports = {
   validateCheck,
   validateObjectId,
+  validateEditingCheck,
 };

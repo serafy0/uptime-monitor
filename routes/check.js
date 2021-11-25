@@ -9,6 +9,7 @@ const {
   pauseCheck,
   removeAllJobs,
   getOneCheck,
+  editCheck,
 } = require("../controllers/check");
 
 router.route("/checkURL").post(protect, addCheck);
@@ -16,4 +17,5 @@ router.route("/pause").post(protect, pauseCheck);
 router.route("/all").get(getAllJobs);
 router.route("/all/remove").get(removeAllJobs);
 router.route("/:id").get(getOneCheck);
+router.route("/:id").patch(editCheck);
 module.exports = router;
