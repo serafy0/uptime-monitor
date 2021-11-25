@@ -68,6 +68,19 @@ exports.pauseCheck = async (req, res, next) => {
   }
 };
 
+exports.getOneCheck = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const check = await Check.findById(id);
+    if (!check) {
+      return res.status(404).json({ error: "check not found" });
+    }
+    return res.status(200).json({ check: check });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getAllJobs = async (req, res, next) => {
   try {
     const jobs = await getAllRepeatable();
