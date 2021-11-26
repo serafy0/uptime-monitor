@@ -10,24 +10,24 @@ exports.addRequest = async ({ status, responseDuration, error }, check) => {
       error: error,
       check: check._id,
     });
+    let isDown = check.isDown;
+    if (
+      check.isDown &&
+      (!error || (check.assert && check.assert.statusCode === status))
+    ) {
+      isDown = false;
+      await sendToWebhook(
+        check.webhook,
+        `${check.url + check.path} is working as expected`
+      );
+    }
 
-    let isDown = check.isDown; //true
-    if (check.webhook) {
-      if (check.isDown && (!error || check.assert.statusCode === status)) {
-        isDown = false;
-        await sendToWebhook(
-          check.webhook,
-          `${check.url + check.path} is working as expected`
-        );
-      }
-
-      if (!check.isDown && error && check.assert.statusCode !== status) {
-        isDown = true;
-        await sendToWebhook(
-          check.webhook,
-          `${check.url + check.path} is down ${error}`
-        );
-      }
+    if (!check.isDown && error && check.assert.statusCode !== status) {
+      isDown = true;
+      await sendToWebhook(
+        check.webhook,
+        `${check.url + check.path} is down ${error}`
+      );
     }
 
     const updatedCheck = await Check.findOneAndUpdate(

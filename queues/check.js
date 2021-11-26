@@ -15,7 +15,7 @@ const myQueueScheduler = new QueueScheduler("check", connection);
 const myQueue = new Queue("check", connection);
 
 const worker = new Worker("check", async (job) => {
-  const check = await Check.findById(job.data.checkId);
+  const check = await Check.findById(job.data.check._id);
   try {
     const response = await requestCheck(check);
     const newRequest = await addRequest(
@@ -26,23 +26,16 @@ const worker = new Worker("check", async (job) => {
       check
     );
   } catch (err) {
-    if (err instanceof HTTPError) {
-      const newRequest = await addRequest(
-        {
-          status: err.response.statusCode,
-          responseDuration: err.timings.phases.total / 1000,
-          error: err,
-        },
-        check
-      );
-    } else {
-      const newRequest = await addRequest(
-        {
-          error: err,
-        },
-        check
-      );
-    }
+    const newRequest = await addRequest(
+      {
+        status: err.response ? err.response.statusCode : undefined,
+        responseDuration: err.timings
+          ? err.timings.phases.total / 1000
+          : undefined,
+        error: err,
+      },
+      check
+    );
   }
 });
 
