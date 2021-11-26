@@ -80,6 +80,25 @@ exports.pauseCheck = async (req, res, next) => {
   }
 };
 
+exports.resumeCheck = async (req, res, next) => {
+  try {
+    const { id } = req.body;
+    const check = await Check.findById(id);
+    if (!check) {
+      return res.status(404).json({ error: "check not found" });
+    }
+
+    if (!check.creator.equals(req.user.id)) {
+      return res.sendStatus(401);
+    }
+    await addCheckJob(check);
+
+    return res.status(200).json({ message: "check resumed" });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getOneCheck = async (req, res, next) => {
   try {
     const { id } = req.params;
