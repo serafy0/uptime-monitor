@@ -12,6 +12,7 @@ const {
   editCheck,
   deleteCheck,
   findByTag,
+  getReportForCheck,
 } = require("../controllers/check");
 
 router.route("/checkURL").post(protect, addCheck);
@@ -22,4 +23,5 @@ router.route("/:id").get(protect, getOneCheck);
 router.route("/:id").patch(protect, editCheck);
 router.route("/:id").delete(protect, deleteCheck);
 router.route("/tag/:tag").get(protect, findByTag);
+router.route("/report/:id").get(protect, getReportForCheck);
 module.exports = router;

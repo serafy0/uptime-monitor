@@ -6,6 +6,11 @@ const {
   removeAllJobs,
 } = require("../queues/check");
 const { validateCheck, validateEditingCheck } = require("../validators/check");
+const {
+  calculateDurations,
+  calculateOutages,
+  calculateAverageResponseTimeAndAvailability,
+} = require("../services/request");
 
 exports.addCheck = async (req, res, next) => {
   try {
@@ -125,6 +130,44 @@ exports.findByTag = async (req, res, next) => {
     next(err);
   }
 };
+exports.getReportForCheck = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const check = await Check.findById(id).populate(
+      "requests",
+      "-check -updatedAt",
+      "request",
+      { sort: { created_at: 1 } }
+    );
+    if (!check) {
+      return res.status(404).json({ error: "check not found" });
+    }
+    if (!check.creator.equals(req.user.id)) {
+      return res.sendStatus(401);
+    }
+
+    const history = check.requests;
+    const { status } = history[history.length - 1];
+
+    const outages = await calculateOutages(check);
+
+    const { availability, averageResponseTime } =
+      await calculateAverageResponseTimeAndAvailability(check._id, outages);
+    const { uptime, downtime } = await calculateDurations(history, check);
+    return res.status(200).json({
+      outages,
+      status,
+      averageResponseTime,
+      availability,
+      uptime,
+      downtime,
+      history,
+    });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
 
 exports.editCheck = async (req, res, next) => {
   try {
@@ -205,6 +248,28 @@ exports.getAllJobs = async (req, res, next) => {
     next(err);
   }
 };
+exports.getAllChecksAndRemove = async (req, res, next) => {
+  try {
+    const promises = [];
+    const checks = await Check.find();
+    checks.forEach((check) => {
+      promises.push(Check.deleteOne({ _id: check._id }));
+    });
+    await Promise.all(promises);
+    return res.status(200).json({ checks: checks });
+  } catch (err) {
+    next(err);
+  }
+};
+exports.getAllChecks = async (req, res, next) => {
+  try {
+    const checks = await Check.find();
+    return res.status(200).json({ checks: checks });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.removeAllJobs = async (req, res, next) => {
   try {
     const jobs = await removeAllJobs();
