@@ -35,9 +35,14 @@ const checkSchema = new mongoose.Schema({
   },
   tags: [{ type: String }],
   ignoreSSL: { type: Boolean, default: true },
-  requests: [{ type: mongoose.Schema.Types.ObjectId, ref: "request" }],
   creator: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
   isDown: { type: Boolean, default: true },
+});
+
+checkSchema.virtual("requests", {
+  ref: "request",
+  localField: "_id",
+  foreignField: "check",
 });
 
 module.exports = Check = mongoose.model("check", checkSchema);

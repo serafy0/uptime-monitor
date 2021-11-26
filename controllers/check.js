@@ -135,7 +135,7 @@ exports.getReportForCheck = async (req, res, next) => {
     const { id } = req.params;
     const check = await Check.findById(id).populate(
       "requests",
-      "-check -updatedAt",
+      "-updatedAt",
       "request",
       { sort: { created_at: 1 } }
     );
