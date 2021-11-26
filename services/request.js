@@ -1,5 +1,4 @@
 const Request = require("../models/request");
-const Check = require("../models/check");
 const got = require("got");
 
 exports.addRequest = async ({ status, responseDuration, error }, check) => {
@@ -29,11 +28,6 @@ exports.addRequest = async ({ status, responseDuration, error }, check) => {
         `${check.url + check.path} is down ${error}`
       );
     }
-
-    const updatedCheck = await Check.findOneAndUpdate(
-      { _id: check._id },
-      { isDown: isDown, $push: { requests: request._id } }
-    );
   } catch (err) {
     return;
   }
