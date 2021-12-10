@@ -1,0 +1,510 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "The main idea of the task is to build an uptime monitoring RESTful API server which allows authorized users to enter URLs they want monitored, and get detailed uptime reports about their availability, average response time, and total uptime/downtime.",
+    "version": "1.0.0",
+    "title": "uptime monitoring API",
+    "contact": {
+      "email": "elserafy02@gmail.com",
+      "url": "https://github.com/serafy0"
+    }
+  },
+  "tags": [
+    {
+      "name": "check",
+      "description": "check operations"
+    },
+    {
+      "name": "auth",
+      "description": "auth operations"
+    }
+  ],
+  "schemes": ["http"],
+  "paths": {
+    "/check": {
+      "post": {
+        "tags": ["check"],
+        "description": "add a new check",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CheckInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "check created",
+            "schema": {
+              "$ref": "#/definitions/Check"
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          }
+        }
+      }
+    },
+    "/check/{id}": {
+      "get": {
+        "tags": ["check"],
+        "summary": "find one check by id",
+        "description": "find one check by id",
+        "operationId": "id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Check"
+            }
+          },
+          "400": {
+            "description": "Invalid id value"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["check"],
+        "description": "delete one check by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid status value"
+          },
+          "401": { "description": "user isn't authorized to delete" }
+        }
+      },
+      "patch": {
+        "tags": ["check"],
+        "description": "edit one check by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "id for check"
+          },
+          {
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CheckInput"
+            },
+            "name": "body"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Check"
+            }
+          },
+          "404": { "description": "not found" },
+          "401": { "description": "user isn't authorized to edit" },
+          "400": { "description": "invalid request" }
+        }
+      }
+    },
+
+    "/check/pause/{id}": {
+      "get": {
+        "tags": ["check"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": { "description": "successful operation" },
+          "404": { "description": "not found" },
+          "401": { "description": "user isn't authorized to pause check" }
+        }
+      }
+    },
+    "/check/tag/{tagName}": {
+      "get": {
+        "description": "get all checks created by user with tag",
+        "tags": ["check"],
+        "produces": ["application/json"],
+
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tagName",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "checks": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Check"
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "not found" },
+          "401": { "description": "user isn't authorized" }
+        }
+      }
+    },
+
+    "/check/report/{id}": {
+      "get": {
+        "description": "get report for check",
+        "tags": ["check"],
+        "produces": ["application/json"],
+
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Report"
+            }
+          },
+          "404": { "description": "not found" },
+          "401": { "description": "user isn't authorized" }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": ["auth"],
+        "description": "register a new user",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["email", "password"],
+
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                },
+                "password": { "type": "string", "format": "password" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": { "description": "user created" },
+          "400": {
+            "description": "invalid request"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["auth"],
+        "description": "login as a user",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["email", "password"],
+
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                },
+                "password": { "type": "string", "format": "password" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "successful operation" },
+          "400": {
+            "description": "invalid request"
+          }
+        }
+      }
+    },
+    "/auth/user": {
+      "get": {
+        "tags": ["auth"],
+        "description": "get current user's info",
+
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "properties": {
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "emailVerified": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "user not logged in"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "tags": ["auth"],
+        "description": "remove the users cookie",
+        "responses": {
+          "200": { "description": "successful operation" },
+          "401": {
+            "description": "user not logged in"
+          }
+        }
+      }
+    },
+    "/auth/resend-token": {
+      "post": {
+        "tags": ["auth"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "email",
+            "schema": {
+              "required": ["email"],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "new refresh token sent to email"
+          },
+          "400": {
+            "description": "invalid request"
+          }
+        }
+      }
+    },
+    "/auth/verify-email/{refreshTokenValue}": {
+      "get": {
+        "description": "verify email with token",
+        "tags": ["auth"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "refreshTokenValue",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "409": {
+            "description": "email was already verified"
+          }
+        }
+      }
+    }
+  },
+
+  "securityDefinitions": {
+    "cookieAuth": {
+      "type": "apiKey",
+      "name": "cookie",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "Check": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "url": { "type": "string" },
+        "path": { "type": "string", "format": "uri" },
+        "protocol": { "type": "string", "format": "uri" },
+        "port": { "type": "number" },
+        "timeoutInSeconds": { "type": "number" },
+        "interval": { "type": "number" },
+        "threshold": { "type": "number" },
+        "assert": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "number" }
+          }
+        },
+        "ignoreSSL": { "type": "boolean" },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isDown": {
+          "type": "boolean"
+        },
+        "creator": {
+          "type": "string"
+        },
+        "authentication": {
+          "type": "object",
+          "properties": {
+            "username": { "type": "string" },
+            "password": { "type": "string", "format": "password" }
+          }
+        },
+        "webhook": { "type": "string", "format": "uri" },
+        "httpHeaders": { "type": "object" },
+        "_id": {
+          "type": "string"
+        }
+      }
+    },
+    "CheckInput": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "linkText": { "type": "string", "format": "uri" },
+        "webhook": { "type": "string", "format": "uri" },
+        "timeout": { "type": "number" },
+        "interval": { "type": "number" },
+        "threshold": { "type": "number" },
+        "httpHeaders": { "type": "object" },
+        "authentication": {
+          "type": "object",
+          "properties": {
+            "username": { "type": "string" },
+            "password": { "type": "string", "format": "password" }
+          }
+        },
+        "assertStatus": { "type": "number", "minimum": 100, "maximum": 599 },
+        "ignoreSSL": { "type": "boolean" },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "example": { "name": "default test", "linkText": "https://google.com" }
+    },
+    "Request": {
+      "type": "object",
+      "properties": {
+        "_id": { "type": "string" },
+        "status": { "type": "number" },
+        "responseDuration": { "type": "number" },
+        "error": {
+          "type": "string"
+        },
+        "check": { "type": "string" },
+        "createdAt": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "Report": {
+      "type": "object",
+      "properties": {
+        "outages": {
+          "type": "string"
+        },
+        "status": {
+          "type": "object"
+        },
+        "averageResponseTime": {
+          "type": "number"
+        },
+        "availability": { "type": "number" },
+        "history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Request"
+          }
+        }
+      }
+    },
+    "ApiResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about this project",
+    "url": "https://github.com/serafy0"
+  }
+}
