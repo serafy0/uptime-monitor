@@ -63,7 +63,7 @@ exports.addCheck = async (req, res, next) => {
 };
 exports.pauseCheck = async (req, res, next) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     const pausedCheck = await Check.findById(id);
     if (!pausedCheck) {
       return res.status(404).json({ error: "check not found" });
@@ -141,7 +141,7 @@ exports.findByTag = async (req, res, next) => {
     const { tag } = req.params;
 
     const checks = await Check.find({ tags: tag, creator: req.user.id });
-    if (!checks) {
+    if (!checks || !checks.length) {
       return res.status(404).json({ error: "no checks found with tag" });
     }
     return res.status(200).json({ checks: checks });
@@ -166,6 +166,9 @@ exports.getReportForCheck = async (req, res, next) => {
     }
 
     const history = check.requests;
+    if (!history || !history.length) {
+      return res.status(404).json({ message: "no requests performed yet" });
+    }
     const { status } = history[history.length - 1];
 
     const outages = await calculateOutages(check);
@@ -183,7 +186,6 @@ exports.getReportForCheck = async (req, res, next) => {
       history,
     });
   } catch (err) {
-    console.log(err);
     next(err);
   }
 };
