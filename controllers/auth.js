@@ -68,7 +68,7 @@ exports.loginUser = async (req, res, next) => {
 
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email }, "email _id");
+    const user = await User.findOne({ email }, "email password _id");
     if (!user) {
       return res.status(400).json({ error: "email not found" });
     }
