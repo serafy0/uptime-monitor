@@ -45,7 +45,7 @@ exports.registerUser = async (req, res, next) => {
     });
     const refreshToken = await RefreshToken.create({ user: user._id });
     user.refreshToken = refreshToken._id;
-    user.save();
+    await user.save();
     await sendVerificationCode(user.email, refreshToken.value);
     await session.endSession();
     return res.status(201).json({
@@ -129,9 +129,10 @@ exports.resendEmailToken = async (req, res, next) => {
       return res.status(400).json({ error: "invalid email" });
     }
     const user = await User.findOne({ email: email }).populate("refreshToken");
-    user.refreshToken.resetToken();
-    await user.save();
-    await sendVerificationCode(user.email, user.refreshToken.value);
+
+    const newTokenValue = await user.refreshToken.resetToken();
+
+    await sendVerificationCode(user.email, newTokenValue);
     return res.status(200).json({
       message: `new refresh token sent to ${user.email}`,
     });

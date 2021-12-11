@@ -23,10 +23,10 @@ const refreshTokenSchema = new mongoose.Schema(
 refreshTokenSchema.virtual("isExpired").get(function () {
   return new Date(Date.now()) >= this.expirationDate;
 });
-refreshTokenSchema.methods.resetToken = function () {
+refreshTokenSchema.methods.resetToken = async function () {
   const newTokenValue = randomToken();
-  const newExpirationDate = Date.now + 3000;
-  this.model("RefreshToken").findOneAndUpdate(
+  const newExpirationDate = Date.now() + 1000 * 60 * 15;
+  await this.model("RefreshToken").findOneAndUpdate(
     { _id: this._id },
     { value: newTokenValue, expirationDate: newExpirationDate }
   );
