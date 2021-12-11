@@ -26,7 +26,7 @@ exports.sendEmail = async (to, { subject, text, html }) => {
   }
 
   let info = await transporter.sendMail({
-    from: '"Fred Foo" <bosta@example.com>' || process.env.EMAIl_ADDRESS, // sender address
+    from: process.env.EMAIl_ADDRESS, // sender address
     to: to,
     subject: subject,
     text: text,

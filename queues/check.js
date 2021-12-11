@@ -6,8 +6,9 @@ const { requestCheck } = require("../services/check");
 const Check = require("../models/check");
 const connection = {
   connection: {
-    port: 6379,
-    host: "localhost",
+    port: process.env.REDIS_PORT,
+    host: process.env.REDIS_HOST,
+    password: process.env.REDIS_PASSWORD,
   },
 };
 const myQueueScheduler = new QueueScheduler("check", connection);
