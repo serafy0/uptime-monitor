@@ -82,7 +82,7 @@ exports.pauseCheck = async (req, res, next) => {
 
 exports.resumeCheck = async (req, res, next) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     const check = await Check.findById(id);
     if (!check) {
       return res.status(404).json({ error: "check not found" });
