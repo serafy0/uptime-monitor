@@ -42,9 +42,7 @@ describe("checks", function () {
         name: "testing",
       });
     request.should.have.status(201);
-    console.log(request.body);
     checkId = request.body.newCheck._id;
-    console.log(checkId);
 
     after(async () => {
       await Check.deleteOne({ _id: checkId });
