@@ -1,5 +1,7 @@
 const Request = require("../models/request");
 const got = require("got");
+const { sendNotification } = require("./notification");
+const { updateDownStatus } = require("./check");
 
 exports.addRequest = async ({ status, responseDuration, error }, check) => {
   try {
@@ -15,34 +17,26 @@ exports.addRequest = async ({ status, responseDuration, error }, check) => {
       (!error || (check.assert && check.assert.statusCode === status))
     ) {
       isDown = false;
-      await sendToWebhook(
-        check.webhook,
-        `${check.url + check.path} is working as expected`
+      await sendNotification(
+        { email: check.creator.email, webhook: check.webhook },
+        {
+          subject: "url check is up",
+          text: `${check.url + check.path} is working as expected`,
+        }
       );
+      await updateDownStatus(check._id, isDown);
     }
 
     if (!check.isDown && error && check.assert.statusCode !== status) {
       isDown = true;
-      await sendToWebhook(
-        check.webhook,
-        `${check.url + check.path} is down ${error}`
+      await sendNotification(
+        { email: check.creator.email, webhook: check.webhook },
+        {
+          subject: "url check is down",
+          text: `${check.url + check.path} is down ${error}`,
+        }
       );
-    }
-  } catch (err) {
-    return;
-  }
-};
-
-const sendToWebhook = async (webhook, message) => {
-  try {
-    if (webhook) {
-      await got({
-        url: webhook,
-        method: "POST",
-        body: JSON.stringify({
-          text: message,
-        }),
-      });
+      await updateDownStatus(check._id, isDown);
     }
   } catch (err) {
     return;

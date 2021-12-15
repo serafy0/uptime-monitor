@@ -1,5 +1,5 @@
 const got = require("got");
-
+const Check = require("../models/check");
 exports.requestCheck = async (check) => {
   return got({
     url: check.url,
@@ -14,4 +14,8 @@ exports.requestCheck = async (check) => {
     username: check.authentication ? check.authentication.username : null,
     password: check.authentication ? check.authentication.password : null,
   });
+};
+
+exports.updateDownStatus = async (checkId, isDown) => {
+  await Check.findByIdAndUpdate(checkId, { isDown: isDown });
 };

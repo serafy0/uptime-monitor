@@ -16,7 +16,10 @@ const myQueueScheduler = new QueueScheduler("check", connection);
 const myQueue = new Queue("check", connection);
 
 const worker = new Worker("check", async (job) => {
-  const check = await Check.findById(job.data.check._id);
+  const check = await Check.findById(job.data.check._id).populate(
+    "creator",
+    "email"
+  );
   try {
     const response = await requestCheck(check);
     const newRequest = await addRequest(
