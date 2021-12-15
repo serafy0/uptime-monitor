@@ -19,7 +19,7 @@
       "description": "auth operations"
     }
   ],
-  "schemes": ["http"],
+  "schemes": ["http","https"],
   "paths": {
     "/check": {
       "post": {
