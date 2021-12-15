@@ -42,7 +42,6 @@ exports.registerUser = async (req, res, next) => {
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: secondsInWeek * 1000,
-      secure: true,
     });
     const refreshToken = await RefreshToken.create({ user: user._id });
     user.refreshToken = refreshToken._id;
@@ -83,7 +82,6 @@ exports.loginUser = async (req, res, next) => {
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: secondsInWeek * 1000,
-      secure: true,
     });
 
     res.status(200).json({
