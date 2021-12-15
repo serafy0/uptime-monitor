@@ -147,6 +147,24 @@
         }
       }
     },
+    "/check/resume/{id}": {
+      "get": {
+        "tags": ["check"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": { "description": "successful operation" },
+          "404": { "description": "not found" },
+          "401": { "description": "user isn't authorized to pause check" }
+        }
+      }
+    },
     "/check/tag/{tagName}": {
       "get": {
         "description": "get all checks created by user with tag",
