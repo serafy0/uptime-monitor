@@ -19,7 +19,6 @@
       "description": "auth operations"
     }
   ],
-  "schemes": ["http","https"],
   "paths": {
     "/check": {
       "post": {
