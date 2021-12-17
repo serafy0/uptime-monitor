@@ -31,12 +31,6 @@ then you should be able to open http://localhost:3000/api-docs/
 ### running tests
 ``npm  test``
 
-npm run dev
-running tests
-
-npm test
-
-you can also use npm run test-with-coverage
 
 ## Technologies
 
