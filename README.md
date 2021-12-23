@@ -25,9 +25,6 @@ you should set up your own environment variables inside a `.env` file
 
 then you should be able to open http://localhost:3000/api-docs/
 
-- note that in order for the deployment docs to work as expected in the swagger schema you should always choose `http` for the schema
-
-
 ### running tests
 ``npm  test``
 
