@@ -39,6 +39,6 @@ then you should be able to open http://localhost:3000/api-docs/
 
 ## deployment 
 
-https://u-monitor.herokuapp.com/api-docs/
+https://uptime-demo.onrender.com/api-docs/
 
 
