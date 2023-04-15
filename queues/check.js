@@ -41,7 +41,7 @@ const worker = new Worker("check", async (job) => {
       check
     );
   }
-});
+},connection);
 
 exports.addCheckJob = async (check) => {
   return await myQueue.add(
