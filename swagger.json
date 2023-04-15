@@ -129,7 +129,7 @@
     },
 
     "/check/pause/{id}": {
-      "get": {
+      "post": {
         "tags": ["check"],
         "parameters": [
           {
@@ -147,7 +147,7 @@
       }
     },
     "/check/resume/{id}": {
-      "get": {
+      "post": {
         "tags": ["check"],
         "parameters": [
           {
